@@ -40,7 +40,7 @@ if choose == 'Chatbot RAG':
                 unique_files.append(file)
                 seen_names.add(file.name)
         files = unique_files
-    if len(files):
+    if files:
         # Tách nội dụng từ trong các files
         raw_text = get_file_text(files)
         if raw_text:
@@ -113,7 +113,7 @@ elif choose == 'Report Generator':
     if not os.path.exists(chart_folder_name):
         os.makedirs(chart_folder_name)
 
-    if file is not None:
+    if file:
         # Kiểm tra xem đuôi file
         if file.name.lower().endswith('.csv'):
             # Xử lý file csv

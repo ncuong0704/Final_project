@@ -212,10 +212,8 @@ def get_file_text(uploaded_files, verbose=False):
                     for page in loader.load_and_split():
                         all_text += page.page_content + '\n'
                 elif suffix in ['.doc', '.docx']:
-                    print('doc')
                     all_text += read_docx(tmp_file_path)
                 elif suffix in ['.ppt', '.pptx']:
-                    print('ppt')
                     all_text = read_pptx(tmp_file_path)
                 else:
                     st.warning(f"⚠️ Unsupported file format: {suffix} for file {file.name}")
