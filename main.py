@@ -3,7 +3,21 @@ import os
 import pandas as pd
 from PIL import Image
 from helper_func import * 
-from constant_var import SUPPORTED_RAG_FILE_TYPES, SUPPORTED_PANDAS_FILE_TYPES
+
+SUPPORTED_RAG_FILE_TYPES = [
+    # Tài liệu văn phòng
+    "pdf",
+    "doc",
+    "docx",
+    "pptx",
+]
+
+SUPPORTED_PANDAS_FILE_TYPES = [
+    "csv",        # Dữ liệu bảng dạng text, phổ biến nhất
+    "xlsx",       # Excel (hỗ trợ nhiều sheet)
+    "xls",        # Excel cũ
+]
+
 
 st.set_page_config(page_title="Assistant", page_icon=":robot_face:", layout='wide')
 

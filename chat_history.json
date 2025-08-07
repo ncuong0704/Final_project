@@ -1,7 +1,19 @@
 [
   {
     "role": "assistant",
-    "content": "Uploaded successfully 1 file: 05-07-2025-10-56-42-cs-data-buoi-9-10(new).pdf"
+    "content": "Uploaded successfully 1 file: Bộ Công Thương chính thức công bố.docx"
+  },
+  {
+    "role": "assistant",
+    "content": "Uploaded successfully 1 file: Bộ Công Thương chính thức công bố.docx"
+  },
+  {
+    "role": "user",
+    "content": "ómắt"
+  },
+  {
+    "role": "assistant",
+    "content": "Câu trả lời không có trong ngữ cảnh."
   },
   {
     "role": "user",
@@ -9,6 +21,6 @@
   },
   {
     "role": "assistant",
-    "content": "Tài liệu này giới thiệu về thư viện Streamlit và cách sử dụng nó để tạo giao diện cho chatbot và dashboard.\n\n**Cài đặt và sử dụng Streamlit:**\n\n*   Cài đặt bằng lệnh `pip install streamlit` (Windows) hoặc `pip3 install matplotlib` (Mac).\n*   Chạy bằng lệnh `streamlit run tên_file.py`.\n*   Sử dụng `import streamlit as st`.\n\n**Ưu điểm của Streamlit:**\n\n*   Tích hợp tốt với các thư viện Python phổ biến như Pandas, Matplotlib, Plotly, Scikit-learn.\n*   Tạo giao diện tương tác dễ dàng với các widget.\n*   Tự động cập nhật khi mã nguồn thay đổi.\n*   Dễ dàng triển khai.\n\n**Các method và widget của Streamlit:**\n\n*   **Methods:** `st.title()`, `st.header()`, `st.subheader()`, `st.text()`, `st.image()`, `st.audio()`, `st.video()` để hiển thị văn bản, hình ảnh, âm thanh, video.\n*   **Widgets:** `st.button()`, `st.checkbox()`, `st.radio()`, `st.selectbox()`, `st.multiselect()`, `st.file_uploader()` để tạo các thành phần tương tác như nút, checkbox, lựa chọn, menu thả xuống, tải file.\n\n**Ứng dụng:**\n\n*   Xây dựng công cụ demo cho mô hình học máy.\n*   Phát triển ứng dụng nội bộ để chia sẻ kết quả phân tích.\n*   Tạo dashboard cơ bản bằng cách kết hợp Streamlit với Pandas, Matplotlib và Seaborn.\n\n**Thực hành:**\n\n*   Tạo giao diện cho chatbot (cải tiến từ các buổi trước).\n*   Vận dụng kiến thức về Pandas, Matplotlib-Seaborn và Streamlit để tạo dashboard."
+    "content": "Theo thông tin từ Bộ Công Thương, Mỹ đã quyết định giảm thuế đối ứng cho Việt Nam từ 46% xuống còn 20% theo sắc lệnh của Tổng thống Donald Trump. Quyết định này được đưa ra sau nhiều phiên đàm phán thương mại đối ứng giữa Việt Nam và Mỹ ở cả cấp kỹ thuật và cấp bộ trưởng, trong đó hai bên đã thảo luận về nhiều vấn đề như thuế quan, quy tắc xuất xứ, thương mại số, và phát triển bền vững. Trong thời gian tới, hai bên sẽ tiếp tục thảo luận để hoàn thành thỏa thuận về thương mại đối ứng, hướng đến mối quan hệ kinh tế, thương mại và đầu tư ổn định, hài hòa lợi ích, tương xứng với quan hệ Đối tác chiến lược toàn diện Việt Nam - Hoa Kỳ. Năm 2024, trao đổi thương mại hai chiều Việt Nam - Mỹ đạt 149,7 tỉ USD, và trong 5 tháng đầu năm 2025, con số này là 77,4 tỉ USD, tăng 36,5% so với cùng kỳ năm 2024."
   }
 ]
