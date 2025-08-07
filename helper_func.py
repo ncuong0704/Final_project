@@ -198,41 +198,40 @@ def get_file_text(uploaded_files, verbose=False):
     """
     all_text = ''
     for file in uploaded_files:
-        if file.name not in st.session_state.processed_files:
+        try:
+            suffix = os.path.splitext(file.name)[1].lower()
+            with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
+                tmp_file.write(file.read())
+                tmp_file_path = tmp_file.name
+
             try:
-                suffix = os.path.splitext(file.name)[1].lower()
-                with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
-                    tmp_file.write(file.read())
-                    tmp_file_path = tmp_file.name
+                # Select loader based on file extension
+                if suffix == '.pdf':
+                    loader = PyPDFLoader(tmp_file_path)
+                    # Extract text from the file
+                    for page in loader.load_and_split():
+                        all_text += page.page_content + '\n'
+                elif suffix in ['.doc', '.docx']:
+                    all_text += read_docx(tmp_file_path)
+                elif suffix in ['.ppt', '.pptx']:
+                    all_text = read_pptx(tmp_file_path)
+                else:
+                    st.warning(f"⚠️ Unsupported file format: {suffix} for file {file.name}")
+                    continue
 
+                if verbose:
+                    st.info(f"Processed file: {file.name}")
+
+            finally:
+                # Ensure temporary file is deleted
                 try:
-                    # Select loader based on file extension
-                    if suffix == '.pdf':
-                        loader = PyPDFLoader(tmp_file_path)
-                        # Extract text from the file
-                        for page in loader.load_and_split():
-                            all_text += page.page_content + '\n'
-                    elif suffix in ['.doc', '.docx']:
-                        all_text += read_docx(tmp_file_path)
-                    elif suffix in ['.ppt', '.pptx']:
-                        all_text = read_pptx(tmp_file_path)
-                    else:
-                        st.warning(f"⚠️ Unsupported file format: {suffix} for file {file.name}")
-                        continue
+                    os.unlink(tmp_file_path)
+                except Exception as e:
+                    st.warning(f"Failed to delete temporary file {tmp_file_path}: {str(e)}")
 
-                    if verbose:
-                        st.info(f"Processed file: {file.name}")
-
-                finally:
-                    # Ensure temporary file is deleted
-                    try:
-                        os.unlink(tmp_file_path)
-                    except Exception as e:
-                        st.warning(f"Failed to delete temporary file {tmp_file_path}: {str(e)}")
-
-            except Exception as e:
-                st.error(f"Error processing file {file.name}: {str(e)}")
-                continue
+        except Exception as e:
+            st.error(f"Error processing file {file.name}: {str(e)}")
+            continue
 
     return all_text
         
