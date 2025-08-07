@@ -237,21 +237,35 @@ def get_file_text(uploaded_files, verbose=False):
         
 def get_text_chunk(text):
     try:
-        #chunk_overlap là nếu từ 1 đến 10000 chưa đủ nghĩa ở cuối thì nó sẽ có lố thêm 1000 để đầy đủ nghĩa
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000,chunk_overlap=100)
+        # Giảm chunk_size và chunk_overlap để giảm tải cho API nhúng
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
         chunks = text_splitter.split_text(text)
         return chunks
     except Exception as e:
-        st.error(f'Lỗi chia chunk: {str(e)}')
+        # st.error là hàm của Streamlit, bạn có thể thay thế bằng print hoặc log tùy vào môi trường
+        print(f'Lỗi chia chunk: {str(e)}')
         return []
 
 def get_vector_store(text_chunks):
     try:
         embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-        vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
+        
+        # Chia các chunk thành các lô nhỏ (ví dụ: 100 chunk mỗi lô)
+        batch_size = 100
+        total_chunks = len(text_chunks)
+        
+        # Tạo vector store từ lô đầu tiên
+        vector_store = FAISS.from_texts(text_chunks[:batch_size], embedding=embeddings)
+        
+        # Thêm các lô tiếp theo
+        for i in range(batch_size, total_chunks, batch_size):
+            batch_chunks = text_chunks[i:i+batch_size]
+            vector_store.add_texts(batch_chunks)
+            print(f"Đã xử lý xong lô từ {i} đến {i+batch_size}")
+            
         vector_store.save_local("faiss_index")
     except Exception as e:
-        st.error(f'Lỗi lưu vector database: {str(e)}')
+        print(f'Lỗi lưu vector database: {str(e)}')
 
 def get_conversational_chain():
     prompt_template = """
