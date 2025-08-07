@@ -34,7 +34,7 @@ def read_pptx(file_path):
     return text
 
 load_dotenv()
-api_key = os.getenv('GOOGLE_API_KEY')
+api_key = st.secrets['gemini']['GOOGLE_API_KEY']
 
 if not api_key:
     st.error('Không tìm thấy key')
@@ -90,7 +90,7 @@ def remove_chart(file_path):
 
 
 def generate_report_from_chart(chart_folder, chart_name):
-    genai.configure(api_key=os.getenv("GEMINI_API_KEY")) # Thay key tại đây
+    genai.configure(api_key=st.secrets['gemini']['GEMINI_API_KEY']) # Thay key tại đây
     model = genai.GenerativeModel("gemini-2.0-flash")
 
     if chart_name.endswith(('.png', '.jpg', '.jpeg')):
