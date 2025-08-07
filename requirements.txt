@@ -1,0 +1,16 @@
+streamlit
+matplotlib
+seaborn
+pandas
+Pillow
+python-dotenv
+google-generativeai
+langchain
+langchain-google-genai
+langchain-community
+faiss-cpu
+openpyxl
+xlwings
+plotly
+python-docx
+python-pptx
