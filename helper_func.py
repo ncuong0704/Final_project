@@ -207,7 +207,6 @@ def get_file_text(uploaded_files, verbose=False):
             try:
                 # Select loader based on file extension
                 if suffix == '.pdf':
-                    print('pdf')
                     loader = PyPDFLoader(tmp_file_path)
                     # Extract text from the file
                     for page in loader.load_and_split():

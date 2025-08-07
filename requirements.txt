@@ -1,3 +1,4 @@
+pypdf
 streamlit
 matplotlib
 seaborn
@@ -14,4 +15,3 @@ xlwings
 plotly
 python-docx
 python-pptx
-pypdf
