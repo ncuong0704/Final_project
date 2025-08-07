@@ -245,7 +245,8 @@ def get_text_chunk(text):
         # st.error là hàm của Streamlit, bạn có thể thay thế bằng print hoặc log tùy vào môi trường
         print(f'Lỗi chia chunk: {str(e)}')
         return []
-
+    
+@st.cache_data
 def get_vector_store(text_chunks):
     try:
         embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
