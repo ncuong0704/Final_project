@@ -5,7 +5,6 @@ import PIL.Image
 from dotenv import load_dotenv
 import os
 import tempfile
-import time
 import google.generativeai as genai
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores import FAISS
@@ -242,7 +241,7 @@ def get_file_text(uploaded_files, verbose=False):
 def get_text_chunk(text):
     try:
         #chunk_overlap là nếu từ 1 đến 10000 chưa đủ nghĩa ở cuối thì nó sẽ có lố thêm 1000 để đầy đủ nghĩa
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000,chunk_overlap=200)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000,chunk_overlap=1000)
         chunks = text_splitter.split_text(text)
         return chunks
     except Exception as e:
@@ -252,28 +251,8 @@ def get_text_chunk(text):
 def get_vector_store(text_chunks):
     try:
         embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-        vector_store = None
-        batch_size = 10
-        all_chunks = []
-
-        for i in range(0, len(text_chunks), batch_size):
-            batch = text_chunks[i:i + batch_size]
-            # Gọi API embedding từng batch
-            try:
-                vs = FAISS.from_texts(batch, embedding=embeddings)
-                all_chunks.append(vs)
-                time.sleep(1)  # nghỉ 1 giây giữa các batch
-            except Exception as e:
-                st.warning(f'Lỗi embedding ở batch {i}-{i+batch_size}: {str(e)}')
-        
-        if all_chunks:
-            vector_store = all_chunks[0]
-            for vs in all_chunks[1:]:
-                vector_store.merge_from(vs)
-
-            vector_store.save_local("faiss_index")
-        else:
-            st.error("Không tạo được bất kỳ vector store nào.")
+        vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
+        vector_store.save_local("faiss_index")
     except Exception as e:
         st.error(f'Lỗi lưu vector database: {str(e)}')
 
