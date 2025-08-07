@@ -1,19 +1,7 @@
 [
   {
     "role": "assistant",
-    "content": "Uploaded successfully 1 file: Bộ Công Thương chính thức công bố.docx"
-  },
-  {
-    "role": "assistant",
-    "content": "Uploaded successfully 1 file: Bộ Công Thương chính thức công bố.docx"
-  },
-  {
-    "role": "user",
-    "content": "ómắt"
-  },
-  {
-    "role": "assistant",
-    "content": "Câu trả lời không có trong ngữ cảnh."
+    "content": "Uploaded successfully 1 file: CS Data - buổi 8 (new).pdf"
   },
   {
     "role": "user",
@@ -21,6 +9,6 @@
   },
   {
     "role": "assistant",
-    "content": "Theo thông tin từ Bộ Công Thương, Mỹ đã quyết định giảm thuế đối ứng cho Việt Nam từ 46% xuống còn 20% theo sắc lệnh của Tổng thống Donald Trump. Quyết định này được đưa ra sau nhiều phiên đàm phán thương mại đối ứng giữa Việt Nam và Mỹ ở cả cấp kỹ thuật và cấp bộ trưởng, trong đó hai bên đã thảo luận về nhiều vấn đề như thuế quan, quy tắc xuất xứ, thương mại số, và phát triển bền vững. Trong thời gian tới, hai bên sẽ tiếp tục thảo luận để hoàn thành thỏa thuận về thương mại đối ứng, hướng đến mối quan hệ kinh tế, thương mại và đầu tư ổn định, hài hòa lợi ích, tương xứng với quan hệ Đối tác chiến lược toàn diện Việt Nam - Hoa Kỳ. Năm 2024, trao đổi thương mại hai chiều Việt Nam - Mỹ đạt 149,7 tỉ USD, và trong 5 tháng đầu năm 2025, con số này là 77,4 tỉ USD, tăng 36,5% so với cùng kỳ năm 2024."
+    "content": "Giáo trình này giới thiệu về việc sử dụng Python cho phân tích dữ liệu, tập trung vào các công cụ và thư viện như Matplotlib và Seaborn. Mục tiêu là xây dựng dashboard cơ bản sử dụng Streamlit và Matplotlib.\n\n    **Nội dung chính:**\n    *   **Matplotlib:** Thư viện mã nguồn mở để tạo biểu đồ và trực quan hóa dữ liệu (biểu đồ cột, đường, phân tán,...). Tích hợp tốt với Pandas để trực quan hóa dữ liệu từ DataFrame và thực hiện EDA cơ bản.\n    *   **Các loại biểu đồ Matplotlib:**\n        *   Line plot: Biểu diễn xu hướng theo thời gian hoặc danh mục.\n        *   Bar plot: So sánh giá trị giữa các danh mục (cột dọc).\n        *   Barh plot: So sánh giá trị giữa các danh mục (cột ngang).\n        *   Pie chart: Hiển thị tỷ lệ phần trăm của các danh mục.\n        *   Scatter plot: Biểu diễn mối quan hệ giữa hai biến số.\n    *   **Seaborn:** Thư viện xây dựng trên Matplotlib, cung cấp giao diện cấp cao hơn để tạo biểu đồ thống kê đẹp mắt và dễ sử dụng. Ưu tiên sử dụng trên Streamlit vì cú pháp ngắn gọn, giao diện đẹp và hỗ trợ các tính năng thống kê.\n    *   **Thực hành:** Phân tích hai dự án nhỏ sử dụng Seaborn."
   }
 ]
