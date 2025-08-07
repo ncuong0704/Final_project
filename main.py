@@ -42,15 +42,22 @@ if choose == 'Chatbot RAG':
         files = unique_files
     if files:
         # Tách nội dụng từ trong các files
-        raw_text = get_file_text(files)
-        if raw_text:
-            # Chia nhỏ nội dung thành các đoạn nhỏ trong mảng list
-            text_chunks = get_text_chunk(raw_text)
-            if text_chunks:
-                # Chuyển hoá văn bản thành từ khoá để hỗ trợ tìm kiếm
-                get_vector_store(text_chunks)
+        if st.sidebar.button('Phân tích dữ liệu'):
+             # Khởi tạo danh sách nếu chưa có
+            if 'processed_files' not in st.session_state:
+                st.session_state.processed_files = []
+
+            raw_text = get_file_text(files)
+            if raw_text:
+                # Chia nhỏ nội dung thành các đoạn nhỏ trong mảng list
+                text_chunks = get_text_chunk(raw_text)
+                if text_chunks:
+                    # Chuyển hoá văn bản thành từ khoá để hỗ trợ tìm kiếm
+                    get_vector_store(text_chunks)
+                else:
+                    st.error('Check the document content again.')
             else:
-                st.error('Check the document content again.')
+                st.error('Không đọc được nội dung tài liệu.')
         # Thông báo khi file tải lên thành công
         current_file_names = [file.name for file in files]
         if 'uploaded_file_names' not in st.session_state:
