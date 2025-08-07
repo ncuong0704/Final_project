@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from PIL import Image
 from helper_func import * 
-from constant import SUPPORTED_RAG_FILE_TYPES, SUPPORTED_PANDAS_FILE_TYPES
+from constant_var import SUPPORTED_RAG_FILE_TYPES, SUPPORTED_PANDAS_FILE_TYPES
 
 st.set_page_config(page_title="Assistant", page_icon=":robot_face:", layout='wide')
 
