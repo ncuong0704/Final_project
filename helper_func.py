@@ -241,7 +241,7 @@ def get_file_text(uploaded_files, verbose=False):
 def get_text_chunk(text):
     try:
         #chunk_overlap là nếu từ 1 đến 10000 chưa đủ nghĩa ở cuối thì nó sẽ có lố thêm 1000 để đầy đủ nghĩa
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000,chunk_overlap=1000)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000,chunk_overlap=200)
         chunks = text_splitter.split_text(text)
         return chunks
     except Exception as e:
