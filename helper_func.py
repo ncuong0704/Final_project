@@ -240,6 +240,7 @@ def get_text_chunk(text):
         # Giảm chunk_size và chunk_overlap để giảm tải cho API nhúng
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
         chunks = text_splitter.split_text(text)
+        st.warning('return chunks')
         return chunks
     except Exception as e:
         # st.error là hàm của Streamlit, bạn có thể thay thế bằng print hoặc log tùy vào môi trường
@@ -265,6 +266,7 @@ def get_vector_store(text_chunks):
             print(f"Đã xử lý xong lô từ {i} đến {i+batch_size}")
             
         vector_store.save_local("faiss_index")
+        st.warning('save_local')
     except Exception as e:
         print(f'Lỗi lưu vector database: {str(e)}')
 
