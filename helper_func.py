@@ -183,7 +183,6 @@ def generate_excel_report(data, reports, report_name, save_option):
             worksheet.merge_range("F27:P33", report["insight"], cell_format)
 
 
-
 # helper functions RAG
 def get_file_text(uploaded_files, verbose=False):
     """
@@ -234,7 +233,7 @@ def get_file_text(uploaded_files, verbose=False):
             continue
 
     return all_text
-        
+@st.cache_data  
 def get_text_chunk(text):
     try:
         # Giảm chunk_size và chunk_overlap để giảm tải cho API nhúng
@@ -246,7 +245,7 @@ def get_text_chunk(text):
         print(f'Lỗi chia chunk: {str(e)}')
         return []
     
-@st.cache_data
+@st.cache_resource
 def get_vector_store(text_chunks):
     try:
         embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
@@ -314,7 +313,9 @@ def user_input(user_question):
         #allow_dangerous_deserialization=False báo lỗi khi có mã độc, True thì bỏ qua
         new_db = FAISS.load_local('faiss_index', embeddings, allow_dangerous_deserialization=True)
         docs = new_db.similarity_search(user_question)
+        st.warning("runing")
         chain = get_conversational_chain()
+        st.warning('done')
         if not chain:
             return
         
