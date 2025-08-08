@@ -204,11 +204,14 @@ def get_file_text(uploaded_files, verbose=False):
             try:
                 # Select loader based on file extension
                 if suffix == '.pdf':
+                    st.warning("tải file")
                     loader = PyPDFLoader(tmp_file_path)
                     # Extract text from the file
                     for page in loader.load_and_split():
                         all_text += page.page_content + '\n'
+                    st.warning("tải file done")
                 elif suffix in ['.doc', '.docx']:
+                    st.warning("tải file")
                     all_text += read_docx(tmp_file_path)
                 elif suffix in ['.ppt', '.pptx']:
                     all_text = read_pptx(tmp_file_path)
@@ -229,7 +232,7 @@ def get_file_text(uploaded_files, verbose=False):
         except Exception as e:
             st.error(f"Error processing file {file.name}: {str(e)}")
             continue
-
+    st.warning("trả về tải file done")
     return all_text
 @st.cache_data  
 def get_text_chunk(text):
