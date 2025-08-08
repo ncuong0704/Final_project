@@ -37,10 +37,9 @@ save_option = {
     'correlations': False
 }
 if choose == 'Chatbot RAG':
-    st.write(check_api_key())
-    
     # Tải file lên
     files = st.sidebar.file_uploader(":file_folder: Upload a file", type=SUPPORTED_RAG_FILE_TYPES, accept_multiple_files=True)
+    
     # Kiểm tra session_state
     if 'chat_history' not in st.session_state:
             st.session_state.chat_history = load_history_chat()
@@ -56,57 +55,64 @@ if choose == 'Chatbot RAG':
                 unique_files.append(file)
                 seen_names.add(file.name)
         files = unique_files
+    
     if files:
-        # Tách nội dụng từ trong các files
-        raw_text = get_file_text(files)
-        if raw_text:
-            # Chia nhỏ nội dung thành các đoạn nhỏ trong mảng list
-            text_chunks = get_text_chunk(raw_text)
-            if text_chunks:
-                # Chuyển hoá văn bản thành từ khoá để hỗ trợ tìm kiếm
-                get_vector_store(text_chunks)
+        if 'click_start' not in st.session_state:
+                st.session_state.click_start = 0
+        if st.sidebar.button('Start'):
+            st.session_state.click_start = 1
+        if st.session_state.click_start == 1:
+            # Tách nội dụng từ trong các files
+            raw_text = get_file_text(files)
+            if raw_text:
+                # Chia nhỏ nội dung thành các đoạn nhỏ trong mảng list
+                text_chunks = get_text_chunk(raw_text)
+                if text_chunks:
+                    # Chuyển hoá văn bản thành từ khoá để hỗ trợ tìm kiếm
+                    get_vector_store(text_chunks)
+                else:
+                    st.error('Check the document content again.')
             else:
-                st.error('Check the document content again.')
-        else:
-            st.error('Không đọc được nội dung tài liệu.')
-        # Thông báo khi file tải lên thành công
-        current_file_names = [file.name for file in files]
-        if 'uploaded_file_names' not in st.session_state:
-            st.session_state.uploaded_file_names = []
-        else:
-            if current_file_names < st.session_state.uploaded_file_names:
+                st.error('Không đọc được nội dung tài liệu.')
+            # Thông báo khi file tải lên thành công
+            current_file_names = [file.name for file in files]
+            if 'uploaded_file_names' not in st.session_state:
+                st.session_state.uploaded_file_names = []
+            else:
+                if current_file_names < st.session_state.uploaded_file_names:
+                    st.session_state.uploaded_file_names = current_file_names
+            # Nếu danh sách file thay đổi thì assistant mới gửi thông báo
+            if current_file_names != st.session_state.uploaded_file_names and len(files) > 0:
+                assistant_msg = f"Uploaded successfully {len(files)} file: " + ", ".join(current_file_names)
+                st.session_state.chat_history.append({'role': 'assistant', 'content': assistant_msg})
+                save_chat_history()
                 st.session_state.uploaded_file_names = current_file_names
-        # Nếu danh sách file thay đổi thì assistant mới gửi thông báo
-        if current_file_names != st.session_state.uploaded_file_names and len(files) > 0:
-            assistant_msg = f"Uploaded successfully {len(files)} file: " + ", ".join(current_file_names)
-            st.session_state.chat_history.append({'role': 'assistant', 'content': assistant_msg})
-            save_chat_history()
-            st.session_state.uploaded_file_names = current_file_names
-        # Tiêu đề
-        st.title(":mag_right: Chatbot RAG")
-        # Khung chat của user
-        user_question = st.chat_input('Please ask after the document has been analyzed.')
-        if user_question:
-            st.session_state.chat_history.append({'role': 'user', 'content': user_question})
-            response = user_input(user_question)
-            st.session_state.chat_history.append({'role': 'assistant', 'content': response})
-            save_chat_history()
-        # khởi tạo session state để lưu lại lịch sử
-        if 'chat_history' not in st.session_state:
-            st.session_state.chat_history = load_history_chat()
-        # hiển thị lịch sử chat
-        for msg in st.session_state.chat_history:
-            with st.chat_message(msg['role']):
-                    st.markdown(msg['content'])
-        # tạo button xoá lịch sử chat
-        if len(st.session_state.chat_history):
-            if st.button('Xoá lịch sử chat'):
-                st.session_state.chat_history = []
-                st.session_state.uploaded_file_names = []  # Xoá luôn danh sách tên file đã upload
-                if os.path.exists('chat_history.json'):
-                    os.remove('chat_history.json')
-                st.rerun()
-       
+            # Tiêu đề
+            st.title(":mag_right: Chatbot RAG")
+            # Khung chat của user
+            user_question = st.chat_input('Please ask after the document has been analyzed.')
+            if user_question:
+                st.session_state.chat_history.append({'role': 'user', 'content': user_question})
+                response = user_input(user_question)
+                st.session_state.chat_history.append({'role': 'assistant', 'content': response})
+                save_chat_history()
+            # khởi tạo session state để lưu lại lịch sử
+            if 'chat_history' not in st.session_state:
+                st.session_state.chat_history = load_history_chat()
+            # hiển thị lịch sử chat
+            for msg in st.session_state.chat_history:
+                with st.chat_message(msg['role']):
+                        st.markdown(msg['content'])
+            # tạo button xoá lịch sử chat
+            if len(st.session_state.chat_history):
+                if st.button('Xoá lịch sử chat'):
+                    st.session_state.chat_history = []
+                    st.session_state.uploaded_file_names = []  # Xoá luôn danh sách tên file đã upload
+                    if os.path.exists('chat_history.json'):
+                        os.remove('chat_history.json')
+                    st.rerun()
+        else:
+            st.title("📥 Let's start.")
     else: 
         st.title("📥 Please share me your data.")
         if os.path.exists('chat_history.json'):

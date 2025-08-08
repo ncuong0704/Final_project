@@ -216,18 +216,14 @@ def get_file_text(uploaded_files, verbose=False):
             with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
                 tmp_file.write(file.read())
                 tmp_file_path = tmp_file.name
-
             try:
                 # Select loader based on file extension
                 if suffix == '.pdf':
-                    st.warning("tải file")
                     loader = PyPDFLoader(tmp_file_path)
                     # Extract text from the file
                     for page in loader.load_and_split():
                         all_text += page.page_content + '\n'
-                    st.warning("tải file done")
                 elif suffix in ['.doc', '.docx']:
-                    st.warning("tải file")
                     all_text += read_docx(tmp_file_path)
                 elif suffix in ['.ppt', '.pptx']:
                     all_text = read_pptx(tmp_file_path)
@@ -248,13 +244,11 @@ def get_file_text(uploaded_files, verbose=False):
         except Exception as e:
             st.error(f"Error processing file {file.name}: {str(e)}")
             continue
-    st.warning("trả về tải file done")
     return all_text
 @st.cache_data
-def get_text_chunk(text, chunk_size=500, chunk_overlap=50):  # Giảm chunk_size
+def get_text_chunk(text, chunk_size=1000, chunk_overlap=200): 
     """Split text into chunks for RAG processing."""
     if not text.strip():
-        st.warning("Empty text provided for chunking")
         st.error("No content to chunk. Please check the uploaded document.")
         return []
     
@@ -264,18 +258,15 @@ def get_text_chunk(text, chunk_size=500, chunk_overlap=50):  # Giảm chunk_size
             chunk_overlap=chunk_overlap
         )
         chunks = [chunk for chunk in text_splitter.split_text(text) if chunk.strip()]  # Loại bỏ chunk rỗng
-        st.warning(f"Created {len(chunks)} non-empty chunks")
         return chunks
     except Exception as e:
-        st.warning(f"Error chunking text: {str(e)}")
         st.error(f"Error chunking text: {str(e)}")
         return []
     
 @st.cache_resource
-def get_vector_store(text_chunks, batch_size=50):  # Giảm batch_size từ 100 xuống 50
+def get_vector_store(text_chunks, batch_size=50):  
     """Create and save FAISS vector store from text chunks."""
     if not text_chunks:
-        st.warning("No text chunks provided for vector store")
         st.error("No text chunks to process. Please check the document content.")
         return None
     
@@ -293,14 +284,11 @@ def get_vector_store(text_chunks, batch_size=50):  # Giảm batch_size từ 100 
         for i in range(batch_size, len(text_chunks), batch_size):
             batch_chunks = text_chunks[i:i + batch_size]
             vector_store.add_texts(batch_chunks)
-            st.warning(f"Processed batch {i} to {i + batch_size}")
         
         vector_store.save_local("faiss_index")
-        st.warning("Vector store saved successfully")
         return vector_store
     
     except Exception as e:
-        st.warning(f"Error creating vector store: {str(e)}")
         st.error(f"Error creating vector store: {str(e)}")
         return None
 
@@ -350,9 +338,7 @@ def user_input(user_question):
         #allow_dangerous_deserialization=False báo lỗi khi có mã độc, True thì bỏ qua
         new_db = FAISS.load_local('faiss_index', embeddings, allow_dangerous_deserialization=True)
         docs = new_db.similarity_search(user_question)
-        st.warning("runing")
         chain = get_conversational_chain()
-        st.warning('done')
         if not chain:
             return
         
@@ -360,7 +346,6 @@ def user_input(user_question):
             {"input_documents": docs, "question": user_question},
             return_only_outputs=True
         )
-        st.warning('done response')
         return response["output_text"]
     except Exception as e:
         st.error(f'Lỗi xử lý câu hỏi: {str(e)}')
