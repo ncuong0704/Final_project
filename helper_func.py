@@ -198,6 +198,7 @@ def generate_excel_report(data, reports, report_name, save_option):
 
 
 # helper functions RAG
+@st.cache_data
 def get_file_text(uploaded_files, verbose=False):
     """
     Extract text from a list of uploaded files using appropriate LangChain loaders.
