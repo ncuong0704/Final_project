@@ -250,8 +250,10 @@ def get_text_chunk(text):
 @st.cache_resource
 def get_vector_store(text_chunks):
     try:
-        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+        st.warning('start save_local')
         
+        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+        st.warning('embeddings')
         # Chia các chunk thành các lô nhỏ (ví dụ: 100 chunk mỗi lô)
         batch_size = 100
         total_chunks = len(text_chunks)
@@ -266,8 +268,9 @@ def get_vector_store(text_chunks):
             print(f"Đã xử lý xong lô từ {i} đến {i+batch_size}")
             
         vector_store.save_local("faiss_index")
-        st.warning('save_local')
+        st.warning('end save_local')
     except Exception as e:
+        st.warning(f'Lỗi lưu vector database: {str(e)}')
         print(f'Lỗi lưu vector database: {str(e)}')
 
 def get_conversational_chain():
