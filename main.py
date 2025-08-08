@@ -37,6 +37,8 @@ save_option = {
     'correlations': False
 }
 if choose == 'Chatbot RAG':
+    st.write(check_api_key())
+    
     # Tải file lên
     files = st.sidebar.file_uploader(":file_folder: Upload a file", type=SUPPORTED_RAG_FILE_TYPES, accept_multiple_files=True)
     # Kiểm tra session_state

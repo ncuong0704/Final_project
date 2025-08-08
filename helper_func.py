@@ -16,6 +16,22 @@ import json
 import plotly.express as px
 from docx import Document
 from pptx import Presentation
+from tenacity import retry, stop_after_attempt, wait_exponential
+
+
+def check_api_key():
+    """Verify if the API key is valid."""
+    try:
+        genai.configure(api_key=st.secrets['gemini']['GOOGLE_API_KEY'])
+        model = genai.GenerativeModel("gemini-2.0-flash")
+        model.generate_content("Test API")  # Gửi yêu cầu thử
+        st.write("API key is valid")
+        return True
+    except Exception as e:
+        st.error(f"Invalid API key or quota exceeded: {str(e)}")
+        st.error(f"Invalid API key or quota exceeded: {str(e)}")
+        return False
+
 
 # hàm lấy text từ file excel
 def read_docx(file_path):
@@ -234,44 +250,59 @@ def get_file_text(uploaded_files, verbose=False):
             continue
     st.warning("trả về tải file done")
     return all_text
-@st.cache_data  
-def get_text_chunk(text):
+@st.cache_data
+def get_text_chunk(text, chunk_size=500, chunk_overlap=50):  # Giảm chunk_size
+    """Split text into chunks for RAG processing."""
+    if not text.strip():
+        st.warning("Empty text provided for chunking")
+        st.error("No content to chunk. Please check the uploaded document.")
+        return []
+    
     try:
-        # Giảm chunk_size và chunk_overlap để giảm tải cho API nhúng
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-        chunks = text_splitter.split_text(text)
-        st.warning('return chunks')
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap
+        )
+        chunks = [chunk for chunk in text_splitter.split_text(text) if chunk.strip()]  # Loại bỏ chunk rỗng
+        st.warning(f"Created {len(chunks)} non-empty chunks")
         return chunks
     except Exception as e:
-        # st.error là hàm của Streamlit, bạn có thể thay thế bằng print hoặc log tùy vào môi trường
-        print(f'Lỗi chia chunk: {str(e)}')
+        st.warning(f"Error chunking text: {str(e)}")
+        st.error(f"Error chunking text: {str(e)}")
         return []
     
 @st.cache_resource
-def get_vector_store(text_chunks):
+def get_vector_store(text_chunks, batch_size=50):  # Giảm batch_size từ 100 xuống 50
+    """Create and save FAISS vector store from text chunks."""
+    if not text_chunks:
+        st.warning("No text chunks provided for vector store")
+        st.error("No text chunks to process. Please check the document content.")
+        return None
+    
     try:
-        st.warning('start save_local')
-        
         embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-        st.warning('embeddings')
-        # Chia các chunk thành các lô nhỏ (ví dụ: 100 chunk mỗi lô)
-        batch_size = 100
-        total_chunks = len(text_chunks)
         
-        # Tạo vector store từ lô đầu tiên
-        vector_store = FAISS.from_texts(text_chunks[:batch_size], embedding=embeddings)
+        @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
+        def embed_batch(chunks):
+            return FAISS.from_texts(chunks, embedding=embeddings)
         
-        # Thêm các lô tiếp theo
-        for i in range(batch_size, total_chunks, batch_size):
-            batch_chunks = text_chunks[i:i+batch_size]
+        # Khởi tạo vector store với batch đầu tiên
+        vector_store = embed_batch(text_chunks[:batch_size])
+        
+        # Thêm các batch tiếp theo
+        for i in range(batch_size, len(text_chunks), batch_size):
+            batch_chunks = text_chunks[i:i + batch_size]
             vector_store.add_texts(batch_chunks)
-            print(f"Đã xử lý xong lô từ {i} đến {i+batch_size}")
-            
+            st.warning(f"Processed batch {i} to {i + batch_size}")
+        
         vector_store.save_local("faiss_index")
-        st.warning('end save_local')
+        st.warning("Vector store saved successfully")
+        return vector_store
+    
     except Exception as e:
-        st.warning(f'Lỗi lưu vector database: {str(e)}')
-        print(f'Lỗi lưu vector database: {str(e)}')
+        st.warning(f"Error creating vector store: {str(e)}")
+        st.error(f"Error creating vector store: {str(e)}")
+        return None
 
 def get_conversational_chain():
     prompt_template = """
