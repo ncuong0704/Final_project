@@ -2,7 +2,6 @@ import streamlit as st
 import seaborn as sns
 import pandas as pd
 import PIL.Image
-from dotenv import load_dotenv
 import os
 import tempfile
 import google.generativeai as genai
@@ -33,7 +32,6 @@ def read_pptx(file_path):
                 text += shape.text + "\n"
     return text
 
-load_dotenv()
 api_key = st.secrets['gemini']['GOOGLE_API_KEY']
 
 if not api_key:
@@ -323,6 +321,7 @@ def user_input(user_question):
             {"input_documents": docs, "question": user_question},
             return_only_outputs=True
         )
+        st.warning('done response')
         return response["output_text"]
     except Exception as e:
         st.error(f'Lỗi xử lý câu hỏi: {str(e)}')
